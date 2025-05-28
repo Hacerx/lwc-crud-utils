@@ -1,18 +1,74 @@
-# Salesforce DX Project: Next Steps
+# ⚡ LWC CRUD Utilities for Salesforce
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+This project provides a reusable set of LWC utilities to simplify performing **batch CRUD operations** (Create, Read, Update, Delete) on Salesforce records using Apex methods.
 
-## How Do You Plan to Deploy Your Changes?
+Designed for Salesforce developers who need to handle **multiple records at once**, this utility is great for admin tools, mass data updates, and dynamic form-based interfaces.
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+---
 
-## Configure Your Salesforce DX Project
+## 📦 Features
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+- 📝 Insert multiple records dynamically
+- 🔄 Update multiple records in a batch
+- ❌ Delete multiple records by ID
+- ✅ Supports `allOrNone` transactions
+- 💡 Type-safe interfaces for cleaner and safer code
 
-## Read All About It
+---
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+## 🔧 Installation
+
+```bash
+sf project deploy start -x manifest/package.xml
+```
+
+---
+
+## 🚀 Example of usage
+```js
+import { LightningElement } from 'lwc';
+import deleteRecords from '@salesforce/apex/LwcCrudUtils.deleteRecords';
+import updateRecords from '@salesforce/apex/LwcCrudUtils.updateRecords';
+import insertRecords from '@salesforce/apex/LwcCrudUtils.insertRecords';
+
+export default class AuxHacerx extends LightningElement {
+  async handleInsert() {
+    const inputs = [
+      {
+        apiName: 'Account',
+        fields: {
+          Name: 'Acme Corp',
+          Industry: 'Technology'
+        }
+      },
+      {
+        apiName: 'Account',
+        fields: {
+          Name: 'Globex Inc',
+          Industry: 'Finance'
+        }
+      }
+    ];
+
+    const result = await insertRecords({ recordInputs: inputs, allOrNone: true });
+    console.log('Insert Results:', result);
+  }
+
+  async handleUpdate() {
+    const records = [
+      { Id: '001XXXXXXXXXXXXAAA', Name: 'Updated Account A' },
+      { Id: '001XXXXXXXXXXXXBBB', Name: 'Updated Account B' }
+    ];
+
+    const result = await updateRecords({ records, allOrNone: false });
+    console.log('Update Results:', result);
+  }
+
+  async handleDelete() {
+    const idsToDelete = ['001XXXXXXXXXXXXAAA', '001XXXXXXXXXXXXBBB'];
+
+    const result = await deleteRecords({ recordIds: idsToDelete, allOrNone: true });
+    console.log('Delete Results:', result);
+  }
+}
+```
