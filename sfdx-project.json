@@ -1,0 +1,15 @@
+{
+  "packageDirectories": [
+    {
+      "path": "src",
+      "default": false
+    },
+    {
+      "path": "unpackaged",
+      "default": true
+    }
+  ],
+  "name": "lwc-crud-utils",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",  "sourceApiVersion": "63.0"
+}
