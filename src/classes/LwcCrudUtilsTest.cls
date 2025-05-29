@@ -55,14 +55,44 @@ public with sharing class LwcCrudUtilsTest {
 
     @isTest
     static void testUpsertRecordsEmpty() {
-        List<LwcCrudUtils.DMLResult> results = LwcCrudUtils.upsertRecords(new List<LwcCrudUtils.RecordInput>(), 'Id', true);
+        List<LwcCrudUtils.DMLResult> results = LwcCrudUtils.upsertRecords(new List<Map<String, Object>>(), 'Account', 'Id', true);
         System.assertEquals(0, results.size());
     }
 
     @isTest
     static void testUpsertRecordsNull() {
-        List<LwcCrudUtils.DMLResult> results = LwcCrudUtils.upsertRecords(null, 'Id', true);
+        List<LwcCrudUtils.DMLResult> results = LwcCrudUtils.upsertRecords(null, 'Account', 'Id', true);
         System.assertEquals(0, results.size());
+    }
+
+    @isTest
+    static void testUpserRecordsExceptionApiName() {
+        try{
+            List<LwcCrudUtils.DMLResult> results = LwcCrudUtils.upsertRecords(new List<Map<String, Object>>(), null, 'Id', true);
+        }catch(Exception e){
+            System.assert(e.getMessage().contains('apiName'), 'Exception should be thrown for null API name');
+        }
+
+        try{
+            List<LwcCrudUtils.DMLResult> results = LwcCrudUtils.upsertRecords(new List<Map<String, Object>>(), '', 'Id', true);
+        }catch(Exception e){
+            System.assert(e.getMessage().contains('externalId'), 'Exception should be thrown for null externalId');
+        }
+    }
+
+    @isTest
+    static void testUpsertRecordsExceptionExternalId() {
+        try{
+            List<LwcCrudUtils.DMLResult> results = LwcCrudUtils.upsertRecords(new List<Map<String, Object>>(), 'Account', null, true);
+        }catch(Exception e){
+            System.assert(e.getMessage().contains('externalId'), 'Exception should be thrown for null externalId');
+        }
+
+        try{
+            List<LwcCrudUtils.DMLResult> results = LwcCrudUtils.upsertRecords(new List<Map<String, Object>>(), 'Account', '', true);
+        }catch(Exception e){
+            System.assert(e.getMessage().contains('externalId'), 'Exception should be thrown for empty externalId');
+        }
     }
 
     @isTest
@@ -211,12 +241,13 @@ public with sharing class LwcCrudUtilsTest {
         // Get actual account
         List<Account> existingAccounts = [SELECT Id FROM Account];
 
-        List<LwcCrudUtils.RecordInput> records = new List<LwcCrudUtils.RecordInput>();
+        List<Map<String, Object>> records = new List<Map<String, Object>>();
         for(Integer i = 0; i < 10; i++) {
-            records.add(new LwcCrudUtils.RecordInput('Account', new Map<String, Object>{ 'Name' => 'Test Account ' + i }));
+            Map<String, Object> recordData = new Map<String, Object>{ 'Name' => 'Test Account ' + i };
+            records.add(recordData);
         }
 
-        List<LwcCrudUtils.DMLResult> results = LwcCrudUtils.upsertRecords(records, 'Id', true);
+        List<LwcCrudUtils.DMLResult> results = LwcCrudUtils.upsertRecords(records, 'Account', 'Id', true);
         System.assertEquals(records.size(), results.size(), 'Number of upsert results should match number of records upserted');
 
         for(LwcCrudUtils.DMLResult result : results) {
@@ -230,13 +261,16 @@ public with sharing class LwcCrudUtilsTest {
 
     @isTest
     static void testUpsertRecordsException() {
-        List<LwcCrudUtils.RecordInput> records = new List<LwcCrudUtils.RecordInput>();
+        List<Map<String, Object>> records = new List<Map<String, Object>>();
         for(Integer i = 0; i < 10; i++) {
-            records.add(new LwcCrudUtils.RecordInput('Account', new Map<String, Object>{ 'Name' => null })); // This will cause a validation error
+            Map<String, Object> recordData = new Map<String, Object>{
+                'Name' => null // This will cause a validation error
+            };
+            records.add(recordData);
         }
 
         try{
-            List<LwcCrudUtils.DMLResult> results = LwcCrudUtils.upsertRecords(records, 'Id', true);
+            List<LwcCrudUtils.DMLResult> results = LwcCrudUtils.upsertRecords(records, 'Account', 'Id', true);
         }catch(Exception e){
             System.assert(e.getMessage().contains(EXCEPTION_MESSAGE), 'Exception message should indicate an error occurred during upsert');
         }

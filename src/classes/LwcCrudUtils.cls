@@ -132,18 +132,28 @@ public with sharing class LwcCrudUtils {
      * @param allOrNone If true, all records must be upserted successfully or none will be upserted
      */
     @AuraEnabled
-    public static List<DMLResult> upsertRecords(List<RecordInput> recordInputs, String externalId, Boolean allOrNone){
+    public static List<DMLResult> upsertRecords(List<Object> records, String apiName, String externalId, Boolean allOrNone){
         List<DMLResult> dmlResults = new List<DMLResult>();
 
+        if(String.isBlank(apiName) || String.isBlank(externalId)){
+            generateAuraException('apiName and externalId must be provided');
+        }
+        
         /**
          * Check if records is null or empty
          */
-        if(recordInputs == null || recordInputs.isEmpty()){
+        if(records == null || records.isEmpty()){
             return dmlResults;
         }
 
+
         try{
-            List<SObject> upsertRecords = getSObjectList(recordInputs);
+            
+            List<SObject> upsertRecords = new List<SObject>();
+
+            for(Object record : records) {
+                upsertRecords.add((SObject)JSON.deserialize(JSON.serialize(record), Type.forName(apiName)));
+            }
 
             Schema.sObjectField schemaExternalId = upsertRecords[0].getSObjectType().getDescribe().fields.getMap().get(externalId).getDescribe().getSObjectField();
 
