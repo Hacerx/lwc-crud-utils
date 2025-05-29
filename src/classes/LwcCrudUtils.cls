@@ -125,6 +125,12 @@ public with sharing class LwcCrudUtils {
         return dmlResults;
     }
 
+    /**
+     * Upsert records (all records must have the same externalId field and it must be the same sObject type)
+     * @param recordInputs List of records to upsert
+     * @param externalId External Id field name
+     * @param allOrNone If true, all records must be upserted successfully or none will be upserted
+     */
     @AuraEnabled
     public static List<DMLResult> upsertRecords(List<RecordInput> recordInputs, String externalId, Boolean allOrNone){
         List<DMLResult> dmlResults = new List<DMLResult>();
