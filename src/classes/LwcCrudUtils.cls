@@ -11,6 +11,16 @@ public with sharing class LwcCrudUtils {
         throw ex;
     }
 
+    private static List<SObject> getSObjectList(List<RecordInput> recordInputs) {
+        List<SObject> records = new List<SObject>();
+
+        for(RecordInput recordInput : recordInputs) {
+            records.add((SObject)JSON.deserialize(JSON.serialize(recordInput.fields), Type.forName(recordInput.apiName)));
+        }
+
+        return records;
+    }
+
     /**
      * Delete records
      * @param recordIds List of record Ids to delete
@@ -72,11 +82,16 @@ public with sharing class LwcCrudUtils {
         return dmlResults;
     }
 
-    class RecordInput {
+    public class RecordInput {
         @AuraEnabled
         public String apiName { get; set; }
         @AuraEnabled
         public Object fields { get; set; }
+
+        public RecordInput(String apiName, Object fields) {
+            this.apiName = apiName;
+            this.fields = fields;
+        }
     }
 
     /**
@@ -96,11 +111,7 @@ public with sharing class LwcCrudUtils {
         }
 
         try{
-            List<SObject> insertRecords = new List<SObject>();
-
-            for(RecordInput recordInput : recordInputs){                
-                insertRecords.add((SObject)JSON.deserialize(JSON.serialize(recordInput.fields), Type.forName(recordInput.apiName)));
-            }
+            List<SObject> insertRecords = getSObjectList(recordInputs);
 
             List<Database.SaveResult> results = Database.insert(insertRecords, allOrNone, AccessLevel.USER_MODE);
 
@@ -114,7 +125,36 @@ public with sharing class LwcCrudUtils {
         return dmlResults;
     }
 
-    class DMLResult {
+    @AuraEnabled
+    public static List<DMLResult> upsertRecords(List<RecordInput> recordInputs, String externalId, Boolean allOrNone){
+        List<DMLResult> dmlResults = new List<DMLResult>();
+
+        /**
+         * Check if records is null or empty
+         */
+        if(recordInputs == null || recordInputs.isEmpty()){
+            return dmlResults;
+        }
+
+        try{
+            List<SObject> upsertRecords = getSObjectList(recordInputs);
+
+            Schema.sObjectField schemaExternalId = upsertRecords[0].getSObjectType().getDescribe().fields.getMap().get(externalId).getDescribe().getSObjectField();
+
+            List<Database.UpsertResult> results = Database.upsert(upsertRecords, schemaExternalId, allOrNone, AccessLevel.USER_MODE);
+
+            for(Database.UpsertResult result : results){
+                dmlResults.add(new DMLResult(result));
+            }
+
+        }catch(Exception e){
+            generateAuraException('Error upserting records, please contact with your admin');
+        }
+
+        return dmlResults;
+    }
+
+    public class DMLResult {
         @AuraEnabled
         public Boolean success { get; set; }
         @AuraEnabled
