@@ -31,6 +31,7 @@ import { LightningElement } from 'lwc';
 import deleteRecords from '@salesforce/apex/LwcCrudUtils.deleteRecords';
 import updateRecords from '@salesforce/apex/LwcCrudUtils.updateRecords';
 import insertRecords from '@salesforce/apex/LwcCrudUtils.insertRecords';
+import upsertRecords from '@salesforce/apex/LwcCrudUtils.upsertRecords';
 
 export default class AuxHacerx extends LightningElement {
   async handleInsert() {
