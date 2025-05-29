@@ -11,6 +11,7 @@ Designed for Salesforce developers who need to handle **multiple records at once
 - 📝 Insert multiple records dynamically
 - 🔄 Update multiple records in a batch
 - ❌ Delete multiple records by ID
+- 🪄 Upsert multiple records by external id
 - ✅ Supports `allOrNone` transactions
 - 💡 Type-safe interfaces for cleaner and safer code
 
@@ -69,6 +70,16 @@ export default class AuxHacerx extends LightningElement {
 
     const result = await deleteRecords({ recordIds: idsToDelete, allOrNone: true });
     console.log('Delete Results:', result);
+  }
+
+  async handleUpsert() {
+    const records = [
+          { External_Id__c: 'ext789', Name: 'John' },
+          { External_Id__c: 'ext101', Name: 'Jane' }
+    ];
+
+    const result = await upsertRecords({ records, apiName: 'Account', externalId: 'External_Id__c', allOrNone: false });
+    console.log('Upsert Results:', result);
   }
 }
 ```
