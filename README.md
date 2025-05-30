@@ -8,10 +8,11 @@ Designed for Salesforce developers who need to handle **multiple records at once
 
 ## 📦 Features
 
-- 📝 Insert multiple records dynamically
-- 🔄 Update multiple records in a batch
-- ❌ Delete multiple records by ID
-- 🪄 Upsert multiple records by external id
+- 📝 Insert multiple records dynamically (different type of objects simultaneously)
+- 🔄 Update multiple records in a batch (different type of objects simultaneously)
+- ❌ Delete multiple records by ID (different type of objects simultaneously)
+- 🪄 Upsert multiple records by external id (one type of object, limited by externalId)
+- 🔍 Retrieve multiple records with dynamic fields
 - ✅ Supports `allOrNone` transactions
 - 💡 Type-safe interfaces for cleaner and safer code
 
@@ -28,7 +29,7 @@ sf project deploy start -x manifest/package.xml
 ## 🚀 Example of usage
 ```js
 import { LightningElement } from 'lwc';
-import { deleteRecords, updateRecords, insertRecords, upsertRecords } from 'c/crudUtils';
+import { deleteRecords, updateRecords, insertRecords, upsertRecords, getRecords } from 'c/crudUtils';
 
 export default class AuxHacerx extends LightningElement {
   async handleInsert() {
@@ -78,6 +79,10 @@ export default class AuxHacerx extends LightningElement {
 
     const result = await upsertRecords({ records, apiName: 'Account', externalId: 'External_Id__c', allOrNone: false });
     console.log('Upsert Results:', result);
+  }
+
+  async handleGetRecords() {
+    const account = await getRecords({ apiName: 'Account', fields: ['Id', 'Name'] })
   }
 }
 ```
