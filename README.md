@@ -28,10 +28,7 @@ sf project deploy start -x manifest/package.xml
 ## 🚀 Example of usage
 ```js
 import { LightningElement } from 'lwc';
-import deleteRecords from '@salesforce/apex/LwcCrudUtils.deleteRecords';
-import updateRecords from '@salesforce/apex/LwcCrudUtils.updateRecords';
-import insertRecords from '@salesforce/apex/LwcCrudUtils.insertRecords';
-import upsertRecords from '@salesforce/apex/LwcCrudUtils.upsertRecords';
+import { deleteRecords, updateRecords, insertRecords, upsertRecords } from 'c/crudUtils';
 
 export default class AuxHacerx extends LightningElement {
   async handleInsert() {
@@ -75,8 +72,8 @@ export default class AuxHacerx extends LightningElement {
 
   async handleUpsert() {
     const records = [
-          { External_Id__c: 'ext789', Name: 'John' },
-          { External_Id__c: 'ext101', Name: 'Jane' }
+      { External_Id__c: 'ext789', Name: 'John' },
+      { External_Id__c: 'ext101', Name: 'Jane' }
     ];
 
     const result = await upsertRecords({ records, apiName: 'Account', externalId: 'External_Id__c', allOrNone: false });
