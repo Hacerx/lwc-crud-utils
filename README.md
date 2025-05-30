@@ -21,7 +21,7 @@ Designed for Salesforce developers who need to handle **multiple records at once
 ## 🔧 Installation
 
 ```bash
-sf project deploy start -x manifest/package.xml
+sf project deploy start -x ./manifest/package.xml -l RunSpecifiedTests -t LwcCrudUtilsTest
 ```
 
 ---
