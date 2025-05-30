@@ -5,5 +5,9 @@
         <members>LwcCrudUtilsTest</members>
         <name>ApexClass</name>
     </types>
+    <types>
+        <members>crudUtils</members>
+        <name>LightningComponentBundle</name>
+    </types>
     <version>63.0</version>
 </Package>
