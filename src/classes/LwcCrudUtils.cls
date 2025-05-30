@@ -146,9 +146,7 @@ public with sharing class LwcCrudUtils {
             return dmlResults;
         }
 
-
-        try{
-            
+        try{            
             List<SObject> upsertRecords = new List<SObject>();
 
             for(Object record : records) {
@@ -162,12 +160,67 @@ public with sharing class LwcCrudUtils {
             for(Database.UpsertResult result : results){
                 dmlResults.add(new DMLResult(result));
             }
-
         }catch(Exception e){
             generateAuraException('Error upserting records, please contact with your admin');
         }
 
         return dmlResults;
+    }
+
+    /**
+     * Get records
+     * ⚠️ This method is unsfe, you should create an specific method for your use case
+     * @param fields List of fields to select
+     * @param querySelect Custom select query, if provided it will override the fields parameter
+     * @param apiName SObject api name
+     * @param whereClause Optional where clause to filter records
+     * @param orderBy Optional order by clause to sort records
+     * @param queryLimit Optional limit to the number of records returned
+     * @return List of SObjects matching the query
+     */
+    @AuraEnabled
+    public static List<SObject> getRecords(List<String> fields, String querySelect, String apiName, String whereClause, String orderBy, Integer queryLimit) {
+        String query = '';
+        List<SObject> records = new List<SObject>();
+
+        if(String.isBlank(apiName)) {
+            generateAuraException('sobject must be provided');
+        }
+
+        if(fields == null || fields.isEmpty() && String.isBlank(querySelect)) {
+            generateAuraException('fields must be provided');
+        }
+        try{
+
+            query += 'SELECT ';
+
+            if(!String.isBlank(querySelect)) {
+                query += querySelect;
+            } else {
+                query += String.join(fields, ', ');
+            }
+
+            query += ' FROM ' + apiName;
+
+            if(!String.isBlank(whereClause)) {
+                query += ' WHERE ' + whereClause;
+            }
+
+            if(!String.isBlank(orderBy)) {
+                query += ' ORDER BY ' + orderBy;
+            }
+
+            if(queryLimit != null && queryLimit > 0) {
+                query += ' LIMIT ' + queryLimit;
+            }
+
+            records = Database.query(query, AccessLevel.USER_MODE);
+
+        }catch(Exception e){
+            generateAuraException('Error getting records, please contact with your admin');
+        }
+        
+        return records;
     }
 
     public class DMLResult {

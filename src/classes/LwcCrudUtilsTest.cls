@@ -275,4 +275,83 @@ public with sharing class LwcCrudUtilsTest {
             System.assert(e.getMessage().contains(EXCEPTION_MESSAGE), 'Exception message should indicate an error occurred during upsert');
         }
     }
+
+    @isTest
+    static void testGetRecordsEmptyFields() {
+        try{
+            List<SObject> records = LwcCrudUtils.getRecords(new List<String>(), '', 'Account', '', '', 0);
+        }
+        catch(Exception e){
+            System.assert(e.getMessage().contains('fields must be provided'), 'Exception should be thrown for empty fields');
+            return;
+        }
+        System.assert(false, 'Test should not reach this point if exception is thrown');
+    }
+
+    @isTest
+    static void testGetRecordsEmptySObject() {
+        try{
+            List<SObject> records = LwcCrudUtils.getRecords(new List<String>(), '', '', '', '', 0);
+        }
+        catch(Exception e){
+            System.assert(e.getMessage().contains('sobject must be provided'), 'Exception should be thrown for empty fields');
+            return;
+        }
+        System.assert(false, 'Test should not reach this point if exception is thrown');
+    }
+
+    @isTest
+    static void testGetRecordsFields() {
+        List<SObject> records = LwcCrudUtils.getRecords(new List<String>{ 'Id', 'Name' }, '', 'Account', '', 'CreatedDate', 10);
+        System.assert(records.size() <= 10, 'Number of records should not exceed the limit');
+        
+        for(SObject record : records) {
+            System.assert(record.Id != null, 'Record ID should not be null');
+            System.assert(record.get('Name') != null, 'Record Name should not be null');
+        }
+    }
+
+    @isTest
+    static void testGetRecordsquerySelect() {
+        List<SObject> records = LwcCrudUtils.getRecords(new List<String>(), 'Id, Name', 'Account', '', 'CreatedDate', 10);
+        System.assert(records.size() <= 10, 'Number of records should not exceed the limit');
+        
+        for(SObject record : records) {
+            System.assert(record.Id != null, 'Record ID should not be null');
+            System.assert(record.get('Name') != null, 'Record Name should not be null');
+        }
+    }
+
+    @isTest
+    static void testGetRecordsWhereClause() {
+        List<SObject> records = LwcCrudUtils.getRecords(new List<String>{ 'Id', 'Name' }, '', 'Account', 'Name LIKE \'Test Account %\'', 'CreatedDate', 10);
+        System.assert(records.size() <= 10, 'Number of records should not exceed the limit');
+        
+        for(SObject record : records) {
+            System.assert(record.Id != null, 'Record ID should not be null');
+            System.assert(record.get('Name') != null, 'Record Name should not be null');
+        }
+    }
+
+    @isTest
+    static void testGetRecordsOrderBy() {
+        List<SObject> records = LwcCrudUtils.getRecords(new List<String>{ 'Id', 'Name' }, '', 'Account', '', 'CreatedDate DESC', 10);
+        System.assert(records.size() <= 10, 'Number of records should not exceed the limit');
+        
+        for(SObject record : records) {
+            System.assert(record.Id != null, 'Record ID should not be null');
+            System.assert(record.get('Name') != null, 'Record Name should not be null');
+        }
+    }
+
+    @isTest
+    static void testGetRecordsException() {
+        try {
+            List<SObject> records = LwcCrudUtils.getRecords(new List<String>{ 'Id', 'Name' }, '', 'InvalidSObject', '', '', 10);
+        } catch (Exception e) {
+            System.assert(e.getMessage().contains('Error getting records, please contact with your admin'), 'Exception should be thrown for invalid SObject');
+            return;
+        }
+        System.assert(false, 'Test should not reach this point if exception is thrown');
+    }
 }
