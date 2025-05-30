@@ -2,6 +2,7 @@ import deleteApexRecords from "@salesforce/apex/LwcCrudUtils.deleteRecords";
 import updateApexRecords from "@salesforce/apex/LwcCrudUtils.updateRecords";
 import insertApexRecords from "@salesforce/apex/LwcCrudUtils.insertRecords";
 import upsertApexRecords from "@salesforce/apex/LwcCrudUtils.upsertRecords";
+import getApexRecords from "@salesforce/apex/LwcCrudUtils.getRecords";
 
 /**
  * Bulk delete records using Apex.
@@ -40,4 +41,8 @@ export function insertRecords({ recordInputs, allOrNone = true }) {
  */
 export function upsertRecords({ records, apiName, externalId = 'Id', allOrNone = true }) {
     return upsertApexRecords({ records, apiName, externalId, allOrNone });
+}
+
+export function getRecords({ fields=[], querySelect='', apiName='', whereClause='', orderBy='', queryLimit=null }) {
+    return getApexRecords({ fields, querySelect, apiName, whereClause, orderBy, queryLimit });
 }

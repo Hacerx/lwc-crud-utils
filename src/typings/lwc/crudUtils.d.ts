@@ -3,6 +3,7 @@ declare module "c/crudUtils" {
     export function updateRecords<T = SObject>(opts: UpdateRecordsOpts<T>): Promise<DMLResult[]>;
     export function insertRecords<T = SObject>(opts: InsertRecordsOpts<T>): Promise<DMLResult[]>;
     export function upsertRecords<T = SObject>(opts: UpsertRecordsOpts<T>): Promise<DMLResult[]>;
+    export function getRecords<T= SObject>(opts: GetRecordsOpts): Promise<T[]>
 }
 
 type DeleteRecordsOpts = {
@@ -73,4 +74,37 @@ type UpsertRecordsOpts<T=SObject> = {
      * @default true
      */
     allOrNone?: boolean;
+}
+
+type GetRecordsOpts = {
+    /**
+     * The API name of the SObject to query.
+     * @example 'Account'
+     */
+    apiName: string;
+    /**
+     * The fields to retrieve from the SObject.
+     * @example ['Id', 'Name', 'CreatedDate']
+     */
+    fields?: string[];
+    /**
+     * The SOQL SELECT clause to specify fields.
+     * @example "Id, Name, CreatedDate"
+     */
+    querySelect?: string;
+    /**
+     * The SOQL ORDER BY clause to sort records.
+     * @example "CreatedDate DESC"
+     */
+    orderBy?: string;
+    /**
+     * The SOQL WHERE clause to filter records.
+     * @example "Name LIKE 'Acme%'"
+     */
+    whereClause?: string;
+    /**
+     * The maximum number of records to retrieve.
+     * @example 100
+     */
+    queryLimit?: number;
 }
