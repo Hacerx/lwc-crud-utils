@@ -1,8 +1,8 @@
 {
-  "name": "salesforce-app",
+  "name": "lwc-crud-utils",
   "private": true,
   "version": "1.0.0",
-  "description": "Salesforce App",
+  "description": "This project provides a reusable set of LWC utilities to simplify performing batch CRUD operations (Create, Read, Update, Delete) on Salesforce records using Apex methods.",
   "scripts": {
     "lint": "eslint **/{aura,lwc}/**/*.js",
     "test": "npm run test:unit",
