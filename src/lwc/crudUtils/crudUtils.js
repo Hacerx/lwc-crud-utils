@@ -43,6 +43,13 @@ export function upsertRecords({ records, apiName, externalId = 'Id', allOrNone =
     return upsertApexRecords({ records, apiName, externalId, allOrNone });
 }
 
+/**
+ * Get records using Apex.
+ * ⚠️ This method is unsfe, you should create an specific method for your use case
+ * @template T
+ * @param {GetRecordsOpts} opts
+ * @returns {Promise<T[]>}
+ */
 export function getRecords({ fields=[], querySelect='', apiName='', whereClause='', orderBy='', queryLimit=null }) {
     return getApexRecords({ fields, querySelect, apiName, whereClause, orderBy, queryLimit });
 }
