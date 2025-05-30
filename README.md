@@ -12,7 +12,7 @@ Designed for Salesforce developers who need to handle **multiple records at once
 - 🔄 Update multiple records in a batch (different type of objects simultaneously)
 - ❌ Delete multiple records by ID (different type of objects simultaneously)
 - 🪄 Upsert multiple records by external id (one type of object, limited by externalId)
-- 🔍 Retrieve multiple records with dynamic fields
+- 🔍 Retrieve multiple records with dynamic fields (⚠️ This method is unsfe, you should create an specific method for your use case)
 - ✅ Supports `allOrNone` transactions
 - 💡 Type-safe interfaces for cleaner and safer code
 
