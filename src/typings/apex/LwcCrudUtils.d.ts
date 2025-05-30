@@ -23,3 +23,7 @@ declare module "@salesforce/apex/LwcCrudUtils.updateRecords" {
 declare module "@salesforce/apex/LwcCrudUtils.insertRecords" {
   export default function insertRecords<T=SObject>(param: {recordInputs: RecordInput<T>, allOrNone: boolean}): Promise<DMLResult[]>;
 }
+
+declare module "@salesforce/apex/LwcCrudUtils.upsertRecords" {
+  export default function upsertRecords<T=SObject>(param: {records: T[], apiName: string, externalId: string, allOrNone: boolean}): Promise<DMLResult[]>;
+}
