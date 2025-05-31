@@ -86,3 +86,87 @@ export default class AuxHacerx extends LightningElement {
   }
 }
 ```
+
+
+---
+
+## 📘 Types
+
+All type definitions are located in [`src/typings/lwc/crudUtils.d.ts`](https://github.com/Hacerx/lwc-crud-utils/blob/master/src/typings/lwc/crudUtils.d.ts)
+
+### `DMLResult`
+
+| Property   | Type       | Required | Description                          |
+|------------|------------|----------|--------------------------------------|
+| `success`  | `boolean`  | ✅       | Operation status                     |
+| `value`    | `string[]` | ✅       | Affected record IDs                  |
+| `reason`   | `string`   | ✅       | Error message if `success` is false  |
+
+### `SObject`
+
+| Property | Type   | Required | Description                    |
+|----------|--------|----------|--------------------------------|
+| `Id`     | string | ✅       | Record ID                     |
+| `[key]`  | any    | ❌       | Additional fields (dynamic)   |
+
+### `RecordInput<T>`
+
+| Property   | Type                        | Required | Description                     |
+|------------|-----------------------------|----------|---------------------------------|
+| `apiName`  | `string`                    | ✅       | API name of the object (e.g. `Account`) |
+| `fields`   | `T` (object with key/values)| ✅       | Field data to insert            |
+
+---
+
+## 🧠 LWC Utility Function Parameters
+
+The following functions are available from the module `c/crudUtils`:
+
+### `deleteRecords(opts: DeleteRecordsOpts): Promise<DMLResult[]>`
+
+| Parameter   | Type       | Required | Default | Description                                      |
+|-------------|------------|----------|---------|--------------------------------------------------|
+| `recordIds` | `string[]` | ✅       | –       | IDs of the records to delete (any SObject type) |
+| `allOrNone` | `boolean`  | ❌       | `true`  | Whether the operation is atomic                 |
+
+---
+
+### `updateRecords<T>(opts: UpdateRecordsOpts<T>): Promise<DMLResult[]>`
+
+| Parameter   | Type   | Required | Default | Description                                      |
+|-------------|--------|----------|---------|--------------------------------------------------|
+| `records`   | `T[]`  | ✅       | –       | Records to update (must include `Id`)           |
+| `allOrNone` | `boolean` | ❌   | `true`  | Whether the operation is atomic                 |
+
+---
+
+### `insertRecords<T>(opts: InsertRecordsOpts<T>): Promise<DMLResult[]>`
+
+| Parameter      | Type                   | Required | Default | Description                                                  |
+|----------------|------------------------|----------|---------|--------------------------------------------------------------|
+| `recordInputs` | `RecordInput<T>`       | ✅       | –       | List of object type + field values to insert                 |
+| `allOrNone`    | `boolean`              | ❌       | `true`  | Whether the operation is atomic                              |
+
+---
+
+### `upsertRecords<T>(opts: UpsertRecordsOpts<T>): Promise<DMLResult[]>`
+
+| Parameter     | Type           | Required | Default     | Description                                                   |
+|---------------|----------------|----------|-------------|---------------------------------------------------------------|
+| `records`     | `T[]`          | ✅       | –           | Records to upsert (must include `Id` or `externalId`)         |
+| `apiName`     | `string`       | ✅       | –           | API name of the SObject                                      |
+| `externalId`  | `string`       | ❌       | `'Id'`      | External ID field name                                       |
+| `allOrNone`   | `boolean`      | ❌       | `true`      | Whether the operation is atomic                              |
+
+---
+
+### `getRecords<T>(opts: GetRecordsOpts): Promise<T[]>`
+
+| Parameter      | Type        | Required | Default | Description                                                  |
+|----------------|-------------|----------|---------|--------------------------------------------------------------|
+| `apiName`      | `string`    | ✅       | –       | API name of the object to query                              |
+| `fields`       | `string[]`  | ❌       | –       | Fields to retrieve                                           |
+| `querySelect`  | `string`    | ❌       | –       | SOQL SELECT clause                                           |
+| `orderBy`      | `string`    | ❌       | –       | SOQL ORDER BY clause                                         |
+| `whereClause`  | `string`    | ❌       | –       | SOQL WHERE clause                                            |
+| `queryLimit`   | `number`    | ❌       | –       | Maximum number of records to return                          |
